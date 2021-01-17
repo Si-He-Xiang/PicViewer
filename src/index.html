@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>迷の看图</title>
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+    <script src="./renderer.js" type="module"></script>
+    <link rel="stylesheet" type="text/css" href="site.css" />
+    <link rel="stylesheet" type="text/css" href="index.css" />
+    <link rel="stylesheet" type="text/css" href="../node_modules/@fortawesome/fontawesome-free/css/all.min.css" />
+</head>
+
+<body>
+    <div id="main-container">
+        <div id="left-container">
+            <div id="folder-tools" class="left-tools">
+                <div class="desc">常用文件夹</div><div class="btn-add"><i class="fas fa-plus-square"></i></div>
+            </div>
+            <div id="selected-folder">
+            </div>
+            <div id="site-tools" class="left-tools">
+                <div class="desc">收藏网站</div>
+                <div class="btn-add"><i class="fas fa-plus-square"></i></div>
+            </div>
+            <div id="selected-site">
+                <ul>
+                    <li data-name="18comic"><i class="fas fa-globe"></i><span>18comic</span></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div id="right-container">
+            <div class="empty-folder">
+                <div>
+                    <i class="far fa-folder"></i>
+                </div>
+                <span>文件夹中没有图片或视频</span>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

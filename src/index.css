@@ -1,0 +1,363 @@
+html{
+    font-size:14px;
+    height:100%;
+}
+body{
+    height:100%;
+    overflow:hidden;
+    cursor:default;
+    margin:0;
+    padding:0;
+}
+#main-container{
+    width:100%;
+    height:100%;
+    background-color: #F0EFF0;
+    display:flex;
+    flex-direction: row;
+    align-items:stretch;
+    overflow:hidden;
+}
+#left-container{
+    width:200px;
+    overflow: hidden;
+    display:flex;
+    flex-direction: column;
+    align-items: stretch;
+    padding-left:10px;
+    padding-bottom:10px;
+}
+
+.left-tools{
+    margin-top:5px;
+    display:flex;
+    flex-direction: row;
+    align-items: stretch;
+    flex-shrink: 1;
+}
+.left-tools>.desc{
+    flex-grow: 1;
+    text-align: left;
+    line-height: 2.5em;
+    font-size:0.8em;
+    color:#828282;
+}
+.left-tools>.btn-add{
+    width:2em;
+    height:2em;
+    text-align: center;
+    line-height: 2em;
+    margin-right:15px;
+    cursor:pointer;
+}
+#selected-site>ul{
+    margin-top:0px;
+    margin-bottom:0px;
+    list-style: none;
+    padding-left: 10px;
+}
+#selected-site>ul>li{
+    cursor:pointer;
+}
+#selected-site>ul>li>span{
+    margin-left:5px;
+}
+
+#selected-folder{
+    width:100%;
+    flex-grow: 1;
+    white-space: nowrap; 
+    overflow-x:auto;
+    overflow-y: auto;
+    /* 
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap; 
+    */
+}
+#selected-folder>.folder-entry{
+    width: fit-content;
+    min-width: 100%;
+    line-height: 2em;
+}
+#right-container{
+    background-color:white;
+    flex-grow: 1;
+    position: relative;
+}
+.empty-folder{
+    width:100%;
+    height: -webkit-fill-available;
+    display:flex;
+    flex-direction: column;
+    justify-content:center;
+    align-items:center;
+    color:lightgray;
+}
+.empty-folder>div{
+    font-size:10em;
+}
+.empty-folder>span{
+    font-size:1.2em;
+}
+body.freeze{
+    overflow:hidden;
+}
+.folder{
+    cursor: pointer;
+}
+.folder-list{
+    margin-top:0px;
+    margin-bottom:0px;
+    list-style: none;
+    padding-left: 10px;
+}
+.folder-list > li{
+    line-height: 2em;
+}
+div.detail{
+    color:#393939;
+    width:fit-content;
+    min-width: 100%;
+}
+div.detail.selected{
+    background-color:#CCCCCC;
+}
+div.detail>span{
+    margin-left:5px;
+}
+div.detail:hover{
+    background-color:#CCCCCC;
+}
+
+.folder-list > li > span.invalid{
+    color:#888888;
+}
+
+.right-view-item{
+    top:0;
+    left:0;
+    position: absolute;
+    background-color: #F0EFF0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+}
+
+.comic-shower.fullwindow{
+    background-color:white;
+    position: absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+}
+.comic-shower.right{
+    top:0;
+}
+.comic-shower.show{
+    z-index:100;
+}
+.comic-show-list{
+    top:0;
+    left:0;
+    position: absolute;
+    width:100%;
+    height:100%;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+.comic-show-list>img{
+    width:100%
+}
+.comic-show-list>canvas{
+    width:100%
+}
+.comic-shower>.toolbar{
+    width:-webkit-fill-available;
+    padding: 0 15px 0 15px;
+    background-color:#F0EFF0;
+    opacity:0.2;
+    position: absolute;
+    top:0;
+    left:0;
+    z-index:101;
+    display:flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    border-bottom: 2px solid #D1D1D1;
+    border-radius :0 0 0.5em 0.5em;
+}
+.comic-shower>.toolbar:hover{
+    opacity:0.8;
+}
+.comic-shower > .toolbar >.btn{
+    top:0;
+    width:2em;
+    height:2em;
+    font-size:1.5em;
+    line-height: 2em;
+    text-align: center;
+    cursor:pointer;
+    z-index:1;
+}
+.comic-shower > .toolbar >.btn.checked{
+    background-color:blue;
+    color:white;
+}
+.comic-shower > .toolbar > .btn:hover{
+    background-color:blue;
+    color:white;
+}
+
+.folder-content-shower{
+    display:flex;
+    flex-direction: column;
+    background:white;
+
+}
+.folder-content-shower>.toolbar{
+    width:-webkit-fill-available;
+    padding: 0 15px 0 15px;
+    display:flex;
+    flex-direction: row;
+    align-items:center;
+    justify-content: flex-start;
+    border-bottom: 2px solid #D1D1D1;
+}
+.folder-content-shower > .toolbar >.btn{
+    width:2em;
+    height:2em;
+    line-height: 2em;
+    text-align: center;
+    cursor:pointer;
+    z-index:1;
+}
+.folder-content-shower > .toolbar > .btn:hover{
+    background-color:blue;
+    color:white;
+}
+.folder-content-shower>.toolbar>.tool{
+    border:1px solid #E6E6E6;
+    border-radius: 5px;
+    height:2em;
+    line-height: 2em;
+    display:flex;
+    flex-direction: row;
+    margin:5px 10px 5px 0;
+    
+
+}
+.folder-content-shower>.toolbar>.tool>.btn{
+    padding:0 15px 0 15px;
+    border-left: 1px solid #F2F2F2;
+}
+.folder-content-shower>.toolbar>.tool>.btn:first-child{
+    border-left: 0px;
+}
+.folder-content-shower>.toolbar>.tool>.btn.selected{
+    background-color: #E6E6E6;
+}
+
+.file-show-list{
+    top:0;
+    left:0;
+    /* position: absolute; */
+    width:99%;
+    /* height:100%; */
+    overflow-y: scroll;
+    overflow-x: hidden;
+    display:flex;
+    flex-direction: row;
+    flex-wrap:wrap;
+    align-content:flex-start;
+    margin:0 0 0 1%;
+
+    flex-grow: 1;
+}
+.file-show-list>.file.desc{
+    position: relative;
+    display:flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    margin:0.5%;
+    padding:0.5%;
+}
+.file-show-list.size-min>.file.desc{
+    width:5rem;
+    height:5rem;
+}
+.file-show-list.size-min>.file.desc>.file-icon-container{
+    height:4rem;
+}
+.file-show-list.size-middle>.file.desc{
+    width:10rem;
+    height:10rem;
+}
+.file-show-list.size-middle>.file.desc>.file-icon-container{
+    height:9rem;
+}
+.file-show-list.size-max>.file.desc{
+    width:20rem;
+    height:20rem;
+}
+.file-show-list.size-max>.file.desc>.file-icon-container{
+    height:19rem;
+}
+
+.file-show-list>.file.desc:hover{
+    box-shadow: 0px 0px 5px #888888;
+}
+.file-show-list>.file.desc>.file-icon-container{
+    width:100%;
+    /* height:inherit; */
+    flex-grow: 1;
+    /* flex-shrink:1; */
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.file-show-list>.file.desc>.file-icon-container>.file-icon{
+    font-size: xxx-large;
+}
+.file-show-list>.file.desc>.file-icon-container>.thumbnail{
+    width:100%;
+    height:100%;
+}
+.file-show-list>.file.desc>.file-icon-container>.thumbnail>.thumbnail-img{
+    width:100%;
+    height:100%;
+    object-fit: contain;
+}
+.file-show-list>.file.desc>.file-name{
+    width:100%;
+    text-align: center;
+}
+.file-show-list>.file.desc>.file-name>.txt{
+    width:100%;
+    height:100%;
+    text-align: center;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.icon>span:before{
+    font-family: "Font Awesome 5 Free";
+    margin-right:5px;
+}
+.icon.closepand>span:before{
+    content:"\f07b";
+}
+.icon.expand>span:before{
+    content:"\f07c";
+}
+.icon.image>span:before{
+    content:"\f1c5";
+}
+
+.hide{
+    display:none;
+}

@@ -1,0 +1,168 @@
+.right-view-item.loading{
+    width:100%;
+    height: -webkit-fill-available;
+    display:flex;
+    flex-direction: column;
+    justify-content:center;
+    align-items:center;
+    color:lightgray;
+    background-color:white;
+}
+.right-view-item.loading.hide{
+    display:none;
+}
+.right-view-item.loading>div{
+    font-size:10em;
+    position: relative;
+}
+.right-view-item.loading>div>.display-container{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}
+.right-view-item.loading>div>.display-container>.display{
+    font-size:2rem;
+}
+.right-view-item.loading>span{
+    font-size:1.2em;
+}
+
+/* 缩略图列表页样式 */
+.albums-shower{
+    display:flex;
+    flex-direction: column;
+    background:white;
+
+}
+.albums-shower>.toolbar{
+    width:-webkit-fill-available;
+    padding: 0 15px 0 15px;
+    display:flex;
+    flex-direction: row;
+    align-items:center;
+    justify-content: flex-start;
+    border-bottom: 2px solid #D1D1D1;
+}
+.albums-shower > .toolbar >.btn{
+    width:2em;
+    height:2em;
+    line-height: 2em;
+    text-align: center;
+    cursor:pointer;
+    z-index:1;
+}
+.albums-shower > .toolbar > .btn:hover{
+    background-color:blue;
+    color:white;
+}
+.albums-shower>.toolbar>.tool{
+    border:1px solid #E6E6E6;
+    border-radius: 5px;
+    height:2em;
+    line-height: 2em;
+    display:flex;
+    flex-direction: row;
+    margin:5px 10px 5px 0;
+    
+
+}
+.albums-shower>.toolbar>.tool>.btn{
+    padding:0 15px 0 15px;
+    border-left: 1px solid #F2F2F2;
+}
+.albums-shower>.toolbar>.tool>.btn:first-child{
+    border-left: 0px;
+}
+.albums-shower>.toolbar>.tool>.btn.selected{
+    background-color: #E6E6E6;
+}
+
+.albums-list{
+    top:0;
+    left:0;
+    /* position: absolute; */
+    width:99%;
+    /* height:100%; */
+    overflow-y: scroll;
+    overflow-x: hidden;
+    display:flex;
+    flex-direction: row;
+    flex-wrap:wrap;
+    align-content:flex-start;
+    margin:0 0 0 1%;
+
+    flex-grow: 1;
+}
+.albums-list>.album.desc{
+    position: relative;
+    display:flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    margin:0.5%;
+    padding:0.5%;
+}
+.albums-list.size-min>.album.desc{
+    width:5rem;
+    height:5rem;
+}
+.albums-list.size-min>.album.desc>.album-img-container{
+    height:4rem;
+}
+.albums-list.size-middle>.album.desc{
+    width:10rem;
+    height:10rem;
+}
+.albums-list.size-middle>.album.desc>.album-img-container{
+    height:9rem;
+}
+.albums-list.size-max>.album.desc{
+    width:20rem;
+    height:20rem;
+}
+.albums-list.size-max>.album.desc>.album-img-container{
+    height:19rem;
+}
+
+.albums-list>.album.desc:hover{
+    box-shadow: 0px 0px 5px #888888;
+}
+.albums-list>.album.desc>.album-img-container{
+    width:100%;
+    /* height:inherit; */
+    flex-grow: 1;
+    /* flex-shrink:1; */
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.albums-list>.album.desc>.album-img-container>.file-icon{
+    font-size: xxx-large;
+}
+/* .albums-list>.album.desc>.album-img-container>.thumbnail{
+    width:100%;
+    height:100%;
+} */
+.albums-list>.album.desc>.album-img-container>.album-img{
+    width:100%;
+    height:100%;
+    object-fit: contain;
+}
+.albums-list>.album.desc>.title{
+    width:100%;
+    text-align: center;
+}
+.albums-list>.album.desc>.title>.txt{
+    width:100%;
+    height:100%;
+    text-align: center;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
