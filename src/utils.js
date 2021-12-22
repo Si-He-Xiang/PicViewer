@@ -53,6 +53,7 @@ const getFileInfo=function(filepath){
                 file_info['isFile'] = file_stats.isFile();
                 file_info['isLink'] = file_stats.isSymbolicLink();
                 file_info['isHidden'] = isHiddenFile(filepath);
+                file_info['isZipFile']=file_stats.isFile() && ('.zip'==path.extname(filepath).toLocaleLowerCase());
                 if (file_stats.isFile()){
                     const extname = path.extname(filepath);
                     const file_mimetype = mimetype.lookup(extname);
@@ -68,12 +69,56 @@ const getFileInfo=function(filepath){
         })
     });
 }
+
+const getZipContentFileInfo=function(zip_obj,src_filename){
+    return new Promise((resolve,reject)=>{
+        const filepath=zip_obj.name;
+        const file_info = { path: filepath };
+        file_info['isDir']=false;
+        file_info['isFile']=false;
+        file_info['isLink'] = false;
+        file_info['isHidden'] = false;
+        file_info['isZipFile']=false;
+        file_info['isBlob']=true;
+        file_info['srcFilename']=src_filename;
+        const extname = path.extname(filepath);
+        const file_mimetype = mimetype.lookup(extname);
+        if (file_mimetype) {
+            file_info['mimetype'] = file_mimetype;
+        }
+        if (isImageFile(filepath)) {
+            file_info['type'] = 'image';
+        }
+
+        zip_obj.async('blob').then(blob=>{
+            file_info['data']=blob;
+            resolve(file_info);
+        }).catch(err=>{
+            reject(err);
+        });
+    });    
+}
+
 const attachFileInfoToEl=function(el,fileinfo){
     if(el && fileinfo){
         attachDataToEl(el,'fullpath',fileinfo.path);
+        if(fileinfo.isBlob){
+            getBlobUrl(fileinfo);
+        }
         attachDataToEl(el, 'fileinfo', JSON.stringify(fileinfo));
     }
 }
+const getBlobUrl=function(fileinfo){
+    if(fileinfo.blolUrl){
+        return fileinfo.blolUrl;
+    }else if(fileinfo.isBlob){
+        fileinfo.blolUrl=URL.createObjectURL(fileinfo.data);
+        return fileinfo.blolUrl;
+    }else{
+        return undefined;
+    }
+}
+
 const parseFileInfoFromEl = function (el) {
     return parseDataFromEl(el,'fileinfo');
 }
@@ -186,8 +231,8 @@ const fn_hide_right_all = () => {
 
 module.exports = { 
     isHiddenFile, isImageFile, 
-    sortByName, cleanElement, getFileInfo,
-    attachFileInfoToEl, parseFileInfoFromEl,
+    sortByName, cleanElement, getFileInfo,getZipContentFileInfo,
+    attachFileInfoToEl, parseFileInfoFromEl,getBlobUrl,
     readImage, getFileIcon,
     attachDataToEl, parseDataFromEl,
     draw18comic, fn_psd_to_canvas,

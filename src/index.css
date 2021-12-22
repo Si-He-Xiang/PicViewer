@@ -348,11 +348,14 @@ div.detail:hover{
     font-family: "Font Awesome 5 Free";
     margin-right:5px;
 }
-.icon.closepand>span:before{
+.folder.icon.closepand>span:before{
     content:"\f07b";
 }
-.icon.expand>span:before{
+.folder.icon.expand>span:before{
     content:"\f07c";
+}
+.zip.icon>span:before{
+    content:"\f1c6";
 }
 .icon.image>span:before{
     content:"\f1c5";

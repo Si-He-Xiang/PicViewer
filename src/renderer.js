@@ -2,6 +2,7 @@
 const { dialog} = require('electron').remote;
 const fs=require('fs');
 const path=require('path')
+const JSZip=require('jszip');
 const utils=require('./utils.js')
 const siteAction=require('./site_action');
 
@@ -16,10 +17,15 @@ const Global={};
         el_div_detail.setAttribute('title', filename);
         el_div_detail.classList.add('detail');
         el_div_detail.classList.add('valid');
-        el_div_detail.classList.add('folder');
+        if(fileinfo.isDir){
+            el_div_detail.classList.add('folder');
+        }
         utils.attachFileInfoToEl(el_div_detail, fileinfo);
         
         el_div_detail.classList.add('icon');
+        if(fileinfo.isZipFile){
+            el_div_detail.classList.add('zip');
+        }
         if (fileinfo.isDir) {
             el_div_detail.classList.add('closepand');
         } else if (fileinfo.type === 'image') {
@@ -89,22 +95,61 @@ const Global={};
 
     // 取得目录下的所有文件和目录
     const fn_get_sub_files = async(parent_folder)=>{
-        const files_list = await new Promise((resolve, reject) => {
-            fs.readdir(parent_folder, (err, files_list) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(files_list)
-                }
+        let type='';
+        const extname=path.extname(parent_folder);
+        const file_stat=fs.lstatSync(parent_folder);
+        if(file_stat.isDirectory()){
+            type='folder';
+        }else if(file_stat.isFile() && '.zip'==extname.toLocaleLowerCase()){
+            type='zip';
+        }
+        if(type=='folder'){
+            const files_list = await new Promise((resolve, reject) => {
+                fs.readdir(parent_folder, (err, files_list) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(files_list)
+                    }
+                });
             });
-        });
-        const p_folder_stat = [];
-        files_list.forEach((filename) => {
-            const file_path = path.join(parent_folder, filename);
-            p_folder_stat.push(utils.getFileInfo(file_path));
-        });
-        let folder_list = await Promise.all(p_folder_stat);   
-        return folder_list;
+            const p_folder_stat = [];
+            files_list.forEach((filename) => {
+                const file_path = path.join(parent_folder, filename);
+                p_folder_stat.push(utils.getFileInfo(file_path));
+            });
+            let folder_list = await Promise.all(p_folder_stat);   
+            return folder_list;
+        }else if(type=='zip'){
+            var zip = new JSZip();
+            const file_data=await new Promise((resolve,reject)=>{
+                fs.readFile(parent_folder, function(err, data) {
+                    if (err) {
+                        reject(e);
+                    } else {
+                        resolve(data);
+                    }
+                });
+            }) ;
+            const zip_data=await new JSZip.external.Promise((resolve, reject)=>{
+                JSZip.loadAsync(file_data).then(dd=>{
+                    resolve(dd);
+                },(err)=>{
+                    reject(err);
+                });
+            });
+            
+            const p_folder_stat = [];
+            for(let filename in zip_data.files){
+                const zip_obj=zip_data.files[filename];
+                p_folder_stat.push(utils.getZipContentFileInfo(zip_obj,parent_folder));
+            };
+
+            let folder_list = await Promise.all(p_folder_stat);   
+            return folder_list;
+        }else{
+            return [];
+        }
     }
 
     // 将漫画模式的顶部工具栏写入某个父元素
@@ -227,7 +272,12 @@ const Global={};
         }
         
         const current_path = el_container.dataset['path'];
-        const dirname = fileinfo.isDir ? fileinfo.path : path.dirname(fileinfo.path);
+        let dirname ='';
+        if(fileinfo.isBlob){
+            dirname =fileinfo['srcFilename']||'';
+        }else{
+            dirname =(fileinfo.isDir || fileinfo.isZipFile) ? fileinfo.path : path.dirname(fileinfo.path);
+        }
         //写入工具栏
         fn_inject_toolbar_in_comic_mode(fileinfo,el_container);
 
@@ -269,7 +319,7 @@ const Global={};
                 const fileinfo_list = await fn_get_sub_files(parent_path);
                 const imageinfo_dict = {};
                 let images_name_list = fileinfo_list.filter((file_info) => {
-                    return file_info.type === 'image';
+                    return file_info.type === 'image' && !file_info.isHidden;
                 }).map((file_info) => {
                     const basename = path.basename(file_info.path);
                     imageinfo_dict[basename] = file_info;
@@ -302,7 +352,11 @@ const Global={};
                             el_img.addEventListener('error',(event)=>{
                                 reject('error');
                             });
-                            el_img.src = imageinfo.path;
+                            if(imageinfo.isBlob){
+                                el_img.src = utils.getBlobUrl(imageinfo);
+                            }else{
+                                el_img.src = imageinfo.path;
+                            }
                         }
                     }));
                     // const el_img = document.createElement('img');
@@ -432,6 +486,8 @@ const Global={};
                 el_div_detail.classList.remove('closepand');
             }
             fn_show_folder_content_in_right(file_info);
+        }else if(file_info.isZipFile){
+            fn_show_folder_content_in_right(file_info);
         } else if (file_info.type==='image'){
             const imageinfo=utils.parseFileInfoFromEl(e_li);
             fn_show_image_by_comic_in_right(imageinfo);
@@ -534,6 +590,7 @@ const Global={};
 
         fn_inject_folder_content(folder_info, el_folder_content_container);
     };
+
     
     const fn_load_image = (image_path)=>{
         if(/\.psd$/i.test(image_path)){
@@ -559,6 +616,23 @@ const Global={};
             });
         }
     };
+
+    const fn_load_image_blob = (file_info)=>{
+        const image_path=file_info.path;
+        return new Promise((resolve,reject)=>{
+            let el_thumbnail_img = undefined;
+            el_thumbnail_img = document.createElement('img');
+            el_thumbnail_img.addEventListener('load', (event) => {
+                resolve(el_thumbnail_img);
+            });
+            el_thumbnail_img.addEventListener('error', (event) => {
+                console.log(el_thumbnail_img, image_path)
+                reject(el_thumbnail_img);
+            });
+            el_thumbnail_img.src = utils.getBlobUrl(file_info);
+            
+        });
+    };    
 
     // 将目录内容注入到指定容器中
     const fn_inject_folder_content=(folder_info,el_container)=>{
@@ -594,21 +668,28 @@ const Global={};
             
             if(utils.isImageFile(fileinfo)){
                 const el_thumbnail = document.createElement('div');
-                const p = fn_load_image(fileinfo.path);
-                p.then(el_thumbnail_img=>{
-                    el_thumbnail_img.classList.add('thumbnail-img');
-                    utils.cleanElement(el_icon_container);
-                    el_thumbnail.append(el_thumbnail_img);
-                    el_thumbnail.classList.add('thumbnail');
-                    el_icon_container.append(el_thumbnail);
-                });
+                let p =null;
+                if(fileinfo.isBlob){
+                    p=fn_load_image_blob(fileinfo);
+                }else if(fileinfo.isFile){
+                    p=fn_load_image(fileinfo.path);
+                }
+                if(p){
+                    p.then(el_thumbnail_img=>{
+                        el_thumbnail_img.classList.add('thumbnail-img');
+                        utils.cleanElement(el_icon_container);
+                        el_thumbnail.append(el_thumbnail_img);
+                        el_thumbnail.classList.add('thumbnail');
+                        el_icon_container.append(el_thumbnail);
+                    });
+                }
             }
             return el_file;
 
         };
         (async _ => {
             const showable_file_list = (await fn_get_sub_files(folder_info.path)).filter((fileinfo) => {
-                return fileinfo.isFile && utils.isImageFile(fileinfo) && !fileinfo.isHidden;
+                return (fileinfo.isFile || fileinfo.isBlob) && utils.isImageFile(fileinfo) && !fileinfo.isHidden;
             });
             if (showable_file_list.length===0){
                 el_container.classList.add('hide');
@@ -692,7 +773,7 @@ const Global={};
         (async _=>{
             let file_info_list =await fn_get_sub_files(parent_folder);
             file_info_list = file_info_list.filter((file_info) => {
-                return file_info.isDir && !file_info.isHidden
+                return (file_info.isDir && !file_info.isHidden) || (file_info.isZipFile)
 
                 // return (file_info.isDir || file_info.type==='image') && !file_info.isHidden
             });
